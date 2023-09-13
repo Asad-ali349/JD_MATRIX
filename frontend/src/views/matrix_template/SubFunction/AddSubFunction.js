@@ -198,9 +198,9 @@ export default function AddSubFunction() {
                                     <Select
                                         labelId={`stackholder-type-label-${index}`}
                                         id={`stackholder-type-select-${index}`}
-                                        value={stackholder.stacholderType}
+                                        value={stackholder.stakeholderType}
                                         label="Stack Holder Type"
-                                        name={`stacholderType`}
+                                        name={`stakeholderType`}
                                         onChange={handleChangeStackHolder(index)}
                                     >
                                         <MenuItem value={'Employee'}>Employee</MenuItem>

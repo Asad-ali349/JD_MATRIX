@@ -122,7 +122,7 @@ export default function AddTemplate() {
                 </Grid>
             </Grid>
             <Grid container sx={{ marginTop: '20px' }}>
-                <Grid item xs={12}>
+                {/* <Grid item xs={12}>
                     <Button sx={{ float: 'right', backgroundColor: '#5e35b1' }} variant="contained" onClick={addfunctions}>
                         Add Funtion
                     </Button>
@@ -150,7 +150,7 @@ export default function AddTemplate() {
                             
                         );
                     })}
-                </Grid>
+                </Grid> */}
                 <Grid display="flex" justifyContent="center" alignItems="center" container>
                     <Button variant="contained" sx={{ backgroundColor: '#5e35b1', marginTop: '50px' }} onClick={submitaddform}>
                         {'Add Template'}

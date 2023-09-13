@@ -368,7 +368,7 @@ export default function TemplateDetail() {
                                                         {column.label}
                                                     </TableCell>
                                                 ))}
-                                                <TableCell style={{ minWidth: 170, backgroundColor: 'grey', color: 'white' }}>Action</TableCell>
+                                                
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
@@ -391,13 +391,7 @@ export default function TemplateDetail() {
                                                                 {row.stackHolderNature.name}
                                                             </TableCell>
                                                             
-                                                            <TableCell key={row.name}>
-                                                                <Link to={"template_detail/"+row._id}>
-                                                                    <FormatListBulletedIcon sx={{ color: '#2196f3', marginRight: '5px' }} />
-                                                                </Link>
-                                                                <EditIcon sx={{ color: '#2196f3' }} />
-                                                                <DeleteIcon sx={{ color: 'red' }}/>
-                                                            </TableCell>
+                                                            
                                                         </TableRow>
                                                     </>
                                                 );
