@@ -1,30 +1,49 @@
 import mongoose from "mongoose";
 import Function from "../models/functions.js";
+import Employee from "../models/employee.js";
+import StakeHolder from "../models/stakeholders.js";
+import Department from "../models/department.js";
+import stakeholders from "../models/stakeholders.js";
 
+export const getFunctionDetail = async (req, res) => {
+  const function_id = req.params.id;
+  // console.log(function_id)
+  try {
+    let singleFunction = await Function.findOne({ _id: function_id }).populate([
+      "parent_template_id",
+      {
+        path: "stackholders.stackHolderNature",
+        model: "StakeHolder", 
+        select: "name",
+      },
+      {
+        path: "stackholders.organization",
+        model: "Organization",
+        select: "name",
+      },
+    ]);
 
-export const getFunctionDetail= async (req, res)=>{
-  const function_id=req.params.id;
-  try{
-    let singleFunction = await Function.findOne({_id:function_id}).populate('parent_template_id')
-    const subsingleFunction= await Function.find({parent_function_id:function_id});
+    for(const stackholder of singleFunction.stackholders){
 
-    const singleFunctiondetail={
-      error:false,
-      singleFunction:singleFunction,
-      sub_functions:subsingleFunction
+      if(stackholder.stakeholderType==="Employee"){
+        let emp_id=stackholder.stakeholder;
+        const employee= await Employee.findOne({_id:emp_id}).select('name _id');
+        stackholder.stackholder=employee;
+      }else if(stackholder.stakeholderType==="Department"){
+        let dep_id=stackholder.stakeholder;
+        const department= await Department.findOne({_id:dep_id}).select('name _id');
+        stackholder.stackholder=department;
+      }
     }
 
-    res.status(200).json(singleFunctiondetail);
-
-
-  }catch(error){
+    res.status(200).json(singleFunction);
+  } catch (error) {
     res.status(404).json({
-      error:true,
-      message:error.message
-    })
+      error: true,
+      message: error.message,
+    });
   }
-
-}
+};
 
 export const getRecycleFunctions = async (req, res) => {
   try {

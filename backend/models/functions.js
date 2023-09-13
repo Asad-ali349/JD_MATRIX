@@ -33,7 +33,10 @@ const functionSchema = mongoose.Schema({
         default:null
     }
   ,
-
+  stackholders:{
+    type:Array,
+    default:[]
+  },
   deleteStatus: { type: Boolean, default: false },
   createdAt: { type: Date, default: new Date() },
 });

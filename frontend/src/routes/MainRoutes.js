@@ -35,6 +35,8 @@ const EditProfile = Loadable(lazy(() => import('views/EditProfile')));
 const ChangePassword = Loadable(lazy(() => import('views/ChangePassword')));
 const EmployeeTemplateDetail = Loadable(lazy(() => import('views/users/EmployeeTemplateDetail')));
 const AuthorizedComponent = Loadable(lazy(() => import('views/Authorization/Index')));
+const AddFunctionComponent = Loadable(lazy(() => import('views/matrix_template/AddFunctions')));
+const EditFunctionComponent = Loadable(lazy(() => import('views/matrix_template/EditFunction')));
 
 
 // sample page routing
@@ -160,6 +162,16 @@ const MainRoutes = {
             id:'employee_template_detail',
             path: '/admin/employee/employee_template_detail/:employee_id/:index',
             element: <AuthorizedComponent Component={EmployeeTemplateDetail}/>
+        },
+        {
+            id:'employee_template_detail',
+            path: '/admin/add_functions/:template_id',
+            element: <AuthorizedComponent Component={AddFunctionComponent}/>
+        },
+        {
+            id:'employee_template_detail',
+            path: '/admin/edit_function/:function_id',
+            element: <AuthorizedComponent Component={EditFunctionComponent}/>
         },
         
     ]

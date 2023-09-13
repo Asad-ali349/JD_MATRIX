@@ -188,7 +188,7 @@ export default function EmployeeDetail() {
 
           {
             data.employee  ?
-            <MainCard title="Departments" sx={{ marginTop: '20px' }}>
+            <MainCard title="Assigned Templates" sx={{ marginTop: '20px' }}>
             <Paper sx={{ width: '100%', overflow: 'hidden' }}>
               <TableContainer sx={{ marginTop: '3%', maxHeight: 440, borderRadius: '10px' }}>
                 <Table stickyHeader aria-label="sticky table">

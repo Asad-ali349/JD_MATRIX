@@ -14,16 +14,40 @@ import Box from '@mui/material/Box';
 import { Grid } from '@mui/material';
 import TreeView from '@mui/lab/TreeView';
 
+import { Link } from 'react-router-dom';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TablePagination from '@mui/material/TablePagination';
+import TableRow from '@mui/material/TableRow';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+
+
+
+const columns = [{ id: 'Organization', label: 'Organization', minWidth: 170 },{ id: 'StackHolderType', label: 'StakeHolder Type', minWidth: 170 },{ id: 'StakeHolder', label: 'StakeHolder', minWidth: 170 },{ id: 'StakeHolder', label: 'Nature', minWidth: 170 },];
 
 export default function Index() {
     const {employee_id}=useParams();
     const {index}=useParams();
+    const [rows,setRows]=useState([]);
+    const [page, setPage] = React.useState(0);
+    const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [template,setTemplate]=useState(null);
     const [expanded, setExpanded] = useState([]);
     const [selectedFunction, setSelectedFunction] = React.useState('');
     const [selectedFunctionId, setSelectedFunctionId] = React.useState('');
 
-
+    const handleChangePage = (event, newPage) => {
+      setPage(newPage);
+  };
+  const handleChangeRowsPerPage = (event) => {
+      setRowsPerPage(+event.target.value);
+      setPage(0);
+  };
     const handleToggle = (nodeId) => {
       if (expanded.includes(nodeId)) {
         setExpanded(expanded.filter((id) => id !== nodeId));
@@ -162,6 +186,71 @@ export default function Index() {
                                 <Grid md={4} sm={12}>
                                     <h4>Function Creation Date :</h4> {extract_date(selectedFunction.createdAt)}
                                 </Grid>
+                                <Grid md={12} sm={12}>
+                              <Paper sx={{ width: '100%', overflow: 'hidden',marginTop:'20px' }}>
+                              <h4>StakeHolders:</h4>
+                                <TableContainer sx={{ marginTop: '3%', maxHeight: 440, borderRadius: '10px' }}>
+                                    <Table stickyHeader aria-label="sticky table">
+                                        <TableHead>
+                                            <TableRow>
+                                                {columns.map((column) => (
+                                                    <TableCell
+                                                        key={column.id}
+                                                        align={column.align}
+                                                        style={{ minWidth: column.minWidth, backgroundColor: 'grey', color: 'white' }}
+                                                    >
+                                                        {column.label}
+                                                    </TableCell>
+                                                ))}
+                                                <TableCell style={{ minWidth: 170, backgroundColor: 'grey', color: 'white' }}>Action</TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                        
+                                            {selectedFunction.stackholders.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                                                return (
+                                                    <>
+                                                        <TableRow hover role="checkbox" tabIndex={-1} key={row.name}>
+                                                            
+                                                            <TableCell key={row._id}>
+                                                                {row.organization.name}
+                                                            </TableCell>
+                                                            <TableCell key={row._id}>
+                                                                {row.stakeholderType}
+                                                            </TableCell>
+                                                            <TableCell key={row._id}>
+                                                                {row.stackholder.name}
+                                                            </TableCell>
+                                                            <TableCell key={row._id}>
+                                                                {row.stackHolderNature.name}
+                                                            </TableCell>
+                                                            
+                                                            <TableCell key={row.name}>
+                                                                <Link to={"template_detail/"+row._id}>
+                                                                    <FormatListBulletedIcon sx={{ color: '#2196f3', marginRight: '5px' }} />
+                                                                </Link>
+                                                                <EditIcon sx={{ color: '#2196f3' }} />
+                                                                <DeleteIcon sx={{ color: 'red' }}/>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    </>
+                                                );
+                                            })}
+                                            
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                                <TablePagination
+                                    rowsPerPageOptions={[5, 20, 50]}
+                                    component="div"
+                                    count={rows.length}
+                                    rowsPerPage={rowsPerPage}
+                                    page={page}
+                                    onPageChange={handleChangePage}
+                                    onRowsPerPageChange={handleChangeRowsPerPage}
+                                />
+                            </Paper>
+                              </Grid>
                             </Grid>
                             :
                             <Grid display="flex" alignItems="center" container sx={{height:100}}>

@@ -11,9 +11,8 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
-export default function AddSubFunction() {
+export default function AddDepartment() {
     const { template_id } = useParams();
-    const { parent_id } = useParams();
     const [functionName, setFunctionName] = useState('');
     const [depShortName, setDeptShortName] = useState('');
     const [stackHolders, setStackHolders] = useState([]);
@@ -79,12 +78,12 @@ export default function AddSubFunction() {
     };
 
     const submitaddform = () => {
+
         if (functionName.length !== 0) {
             axios
                 .post(process.env.REACT_APP_BACKEND_URL + 'functions/', {
                     name: functionName,
                     parent_template_id:template_id,
-                    parent_function_id:parent_id,
                     stackholders: stackHolders,
                 })
                 .then((response) => {
@@ -148,14 +147,14 @@ export default function AddSubFunction() {
     }
 
     return (
-        <MainCard title="Add Sub Function">
+        <MainCard title="Add Functions">
             <Alert openSnackBar={openSnackBar} handleClose={handleSnackClose} msgType={msgType} msg={msg} />
             <Grid container sx={{ marginTop: '20px' }}>
                 <Grid xs={12} md={6} sx={{ paddingLeft: '10px', paddingRight: '10px' }}>
                     <TextField
                         fullWidth
                         id="outlined-basic"
-                        label="Sub Function Name"
+                        label="Function Name"
                         variant="outlined"
                         onChange={handleNameField}
                         value={functionName}
@@ -198,9 +197,9 @@ export default function AddSubFunction() {
                                     <Select
                                         labelId={`stackholder-type-label-${index}`}
                                         id={`stackholder-type-select-${index}`}
-                                        value={stackholder.stacholderType}
+                                        value={stackholder.stakeholderType}
                                         label="Stack Holder Type"
-                                        name={`stacholderType`}
+                                        name={`stakeholderType`}
                                         onChange={handleChangeStackHolder(index)}
                                     >
                                         <MenuItem value={'Employee'}>Employee</MenuItem>
@@ -286,7 +285,7 @@ export default function AddSubFunction() {
                 </Grid>
                 <Grid display="flex" justifyContent="center" alignItems="center" container>
                     <Button variant="contained" sx={{ backgroundColor: '#5e35b1', marginTop: '50px' }} onClick={submitaddform}>
-                        {'Add Sub Function'}
+                        {'Add Functions'}
                     </Button>
                 </Grid>
             </Grid>

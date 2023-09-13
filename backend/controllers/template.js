@@ -2,6 +2,8 @@ import mongoose from "mongoose";
 import Template from "../models/template.js";
 import Functions from "../models/functions.js";
 import nodemailer from "nodemailer";
+import Employee from "../models/employee.js";
+import Department from "../models/department.js";
 
 // export const getTemplates = async (req, res) => {
 //   try {
@@ -44,7 +46,68 @@ export const getTemplateDetail= async (req, res)=>{
   const temp_id=req.params.id;
   try{
     let template = await Template.findOne({_id:temp_id});
-    let functions= await Functions.find({parent_template_id:temp_id});
+    let functions= await Functions.find({parent_template_id:temp_id}).populate([
+      {
+        path: "stackholders.stackHolderNature",
+        model: "StakeHolder", 
+        select: "name",
+      },
+      {
+        path: "stackholders.organization",
+        model: "Organization",
+        select: "name",
+      },
+    ]);
+
+
+
+    for(const Singlefunction of functions){ 
+        if(Singlefunction.stackholders.length!=0){  
+          for(const stackholder of Singlefunction.stackholders){
+
+            if(stackholder.stakeholderType==="Employee"){
+              let emp_id=stackholder.stakeholder;
+              const employee= await Employee.findOne({_id:emp_id}).select('name _id');
+              stackholder.stackholder=employee;
+            }else if(stackholder.stakeholderType==="Department"){
+              let dep_id=stackholder.stakeholder;
+              const department= await Department.findOne({_id:dep_id}).select('name _id');
+              stackholder.stackholder=department;
+            }
+          }
+        }
+    }
+
+
+
+
+
+    // let singleFunction = await Function.findOne({ _id: function_id }).populate([
+    //   "parent_template_id",
+    //   {
+    //     path: "stackholders.stackHolderNature",
+    //     model: "StakeHolder", 
+    //     select: "name",
+    //   },
+    //   {
+    //     path: "stackholders.organization",
+    //     model: "Organization",
+    //     select: "name",
+    //   },
+    // ]);
+
+    // for(const stackholder of singleFunction.stackholders){
+
+    //   if(stackholder.stakeholderType==="Employee"){
+    //     let emp_id=stackholder.stakeholder;
+    //     const employee= await Employee.findOne({_id:emp_id}).select('name _id');
+    //     stackholder.stackholder=employee;
+    //   }else if(stackholder.stakeholderType==="Department"){
+    //     let dep_id=stackholder.stakeholder;
+    //     const department= await Department.findOne({_id:dep_id}).select('name _id');
+    //     stackholder.stackholder=department;
+    //   }
+    // }
     
     const templatedetail={
       error:false,

@@ -7,21 +7,26 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { Grid } from '@mui/material';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import axios from 'axios';
 import Alert from 'ui-component/Alert_SnackBar/Alert_SnackBar';
 import { useState } from 'react';
 import TreeView from '@mui/lab/TreeView';
-// import TreeItem from '@mui/lab/TreeItem';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import Menu_Button from 'ui-component/Menu_Button/Menu_Button';
 import TreeItem, { treeItemClasses } from '@mui/lab/TreeItem';
-import Collapse from '@mui/material/Collapse';
-import { useSpring, animated } from '@react-spring/web';
-import PropTypes from 'prop-types';
-import { alpha, styled } from '@mui/material/styles';
+
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TablePagination from '@mui/material/TablePagination';
+import TableRow from '@mui/material/TableRow';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 const style = {
     position: 'absolute',
     top: '50%',
@@ -33,15 +38,16 @@ const style = {
     p: 4
 };
 
-  
-  
-  
-  
- 
+
+const columns = [{ id: 'Organization', label: 'Organization', minWidth: 170 },{ id: 'StackHolderType', label: 'StakeHolder Type', minWidth: 170 },{ id: 'StakeHolder', label: 'StakeHolder', minWidth: 170 },{ id: 'StakeHolder', label: 'Nature', minWidth: 170 },];
+
 
 export default function TemplateDetail() {
-
+    const navigate=useNavigate();
     const { id } = useParams();
+    const [rows,setRows]=useState([]);
+    const [page, setPage] = React.useState(0);
+    const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [templateDetail, setTemplateDetail] = React.useState({});
     const [functions, setFunction] = React.useState([]);
     const [functionTree, setFunctionTree] = React.useState([]);
@@ -56,6 +62,17 @@ export default function TemplateDetail() {
     const handleCloseSubFunctionModel = () => SetOpenSubFunctionModel(false);
     const [submitted, setSubmitted] = React.useState(0);
     const [editModelData, setEditModelData] = React.useState({});
+
+
+
+
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
+    };
+    const handleChangeRowsPerPage = (event) => {
+        setRowsPerPage(+event.target.value);
+        setPage(0);
+    };
     // --------------------------For Snacbar Alert-----------------------------------
     const [openSnackBar, setOpenSnackBar] = useState(false);
     const [msg, setMsg] = useState('');
@@ -130,6 +147,7 @@ export default function TemplateDetail() {
         // Perform your specific task here
         setSelectedFunction(node)
         setSelectedFunctionId(node._id)
+        console.log(node)
       };
       const renderTreeNodes = (nodes) => {
         return nodes.map((node) => (
@@ -258,7 +276,7 @@ export default function TemplateDetail() {
             <MainCard title="Template Detail" sx={{ paddingBottom: '2%' }}>
                 <Grid container spacing={2} display={'flex'} justifyContent={'end'}>
                     <Grid item>
-                    <Button sx={{ float: 'right', backgroundColor: '#5e35b1' }} variant="contained" onClick={handleOpenSubFunctionModel}>
+                    <Button sx={{ float: 'right', backgroundColor: '#5e35b1' }} variant="contained" onClick={()=>navigate('/admin/add_functions/'+templateDetail._id)}>
                         Add Function
                     </Button>
                     </Grid>
@@ -266,30 +284,7 @@ export default function TemplateDetail() {
                     
                 </Grid>
 
-                <Modal
-                fullWidth
-                open={openSubFunctionModel}
-                onClose={handleCloseSubFunctionModel}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-                >
-                    <Box sx={style}>
-                        <Typography id="modal-modal-title" variant="h3" component="h2">
-                            Add Function
-                        </Typography>
-                        <Grid container spacing={2} sx={{ marginTop: '10px' }}>
-                            <Grid item xs={12}>
-                                <TextField fullWidth onKeyPress={handleKeyPress}  id="outlined-basic" label="Function Name" variant="outlined" value={functionname} onChange={(e)=>{setFunctionName(e.target.value)}}/>
-                            </Grid>
-                            
-                            <Grid item xs={12}>
-                                <Button fullWidth sx={{ height: '50px', borderRadius: '8px' }} onClick={submitaddform} variant="outlined" >
-                                    Add Function
-                                </Button>
-                            </Grid>
-                        </Grid>
-                    </Box>
-                </Modal>
+               
                 <Grid container sx={{ marginTop: '20px' }}>
                     <Grid md={4} sm={12}>
                         <h4>Template Name:</h4> {templateDetail.name}
@@ -317,7 +312,7 @@ export default function TemplateDetail() {
                             },
                             {
                                 label: 'Edit '+selectedFunction.name,
-                                link:'',
+                                link:``,
                                 onclickMethod:{handleOpenEditFunctionModel},
                                 data:selectedFunction
 
@@ -339,7 +334,6 @@ export default function TemplateDetail() {
                             {functions.length!=0?
                                 <TreeView
                                 expanded={expanded}
-                                
                                 >
                                     {renderTreeNodes(functionTree)}
                                 </TreeView>:''
@@ -349,14 +343,79 @@ export default function TemplateDetail() {
                           
                         </Grid>
                         <Grid item sm={8} md={8} lg={8} >
-                        {
+                        { 
                           selectedFunction!=''? 
                           <Grid container sx={{ marginTop: '20px' }}>
                               <Grid md={4} sm={12}>
-                                  <h4>Template Name:</h4> {selectedFunction.name}
+                                  <h4>Function Name:</h4> {selectedFunction.name}
                               </Grid>
                               <Grid md={4} sm={12}>
-                                  <h4>Template Creation Date :</h4> {extract_date(selectedFunction.createdAt)}
+                                  <h4>Function Creation Date :</h4> {extract_date(selectedFunction.createdAt)}
+                              </Grid>
+                              <Grid md={12} sm={12}>
+                              <Paper sx={{ width: '100%', overflow: 'hidden',marginTop:'20px' }}>
+                              <h4>StakeHolders:</h4>
+                                <TableContainer sx={{ marginTop: '3%', maxHeight: 440, borderRadius: '10px' }}>
+                                    <Table stickyHeader aria-label="sticky table">
+                                        <TableHead>
+                                            <TableRow>
+                                                {columns.map((column) => (
+                                                    <TableCell
+                                                        key={column.id}
+                                                        align={column.align}
+                                                        style={{ minWidth: column.minWidth, backgroundColor: 'grey', color: 'white' }}
+                                                    >
+                                                        {column.label}
+                                                    </TableCell>
+                                                ))}
+                                                <TableCell style={{ minWidth: 170, backgroundColor: 'grey', color: 'white' }}>Action</TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                        
+                                            {selectedFunction.stackholders.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                                                return (
+                                                    <>
+                                                        <TableRow hover role="checkbox" tabIndex={-1} key={row.name}>
+                                                            
+                                                            <TableCell key={row._id}>
+                                                                {row.organization.name}
+                                                            </TableCell>
+                                                            <TableCell key={row._id}>
+                                                                {row.stakeholderType}
+                                                            </TableCell>
+                                                            <TableCell key={row._id}>
+                                                                {row.stackholder.name}
+                                                            </TableCell>
+                                                            <TableCell key={row._id}>
+                                                                {row.stackHolderNature.name}
+                                                            </TableCell>
+                                                            
+                                                            <TableCell key={row.name}>
+                                                                <Link to={"template_detail/"+row._id}>
+                                                                    <FormatListBulletedIcon sx={{ color: '#2196f3', marginRight: '5px' }} />
+                                                                </Link>
+                                                                <EditIcon sx={{ color: '#2196f3' }} />
+                                                                <DeleteIcon sx={{ color: 'red' }}/>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    </>
+                                                );
+                                            })}
+                                            
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                                <TablePagination
+                                    rowsPerPageOptions={[5, 20, 50]}
+                                    component="div"
+                                    count={rows.length}
+                                    rowsPerPage={rowsPerPage}
+                                    page={page}
+                                    onPageChange={handleChangePage}
+                                    onRowsPerPageChange={handleChangeRowsPerPage}
+                                />
+                            </Paper>
                               </Grid>
                           </Grid>
                           :

@@ -104,6 +104,11 @@ const FirebaseLogin = ({ ...others }) => {
                     setMsgType('error');
                     handleClick();
                 }
+            }).catch((error)=>{
+                    // console.log(error);
+                    setMsg(error.message);
+                    setMsgType('error');
+                    handleClick();
             });
         }
     }
