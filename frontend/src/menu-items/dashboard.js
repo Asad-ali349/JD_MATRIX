@@ -21,7 +21,7 @@ const dashboard = {
         },
         {
             id: 'organizations',
-            title: 'Organisations',
+            title: 'Organizations',
             type: 'item',
             url: 'organizations',
             icon: IconBuildingBank,
